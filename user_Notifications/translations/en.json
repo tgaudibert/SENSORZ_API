@@ -1,0 +1,8 @@
+{
+
+  "LOW_BATTERY": "A device got low battery",
+  "WEAK_SIGNAL": "A device seems to receive low signal",
+  "LOW_LEVEL": "A container will soon needs to be filled",
+  "MASTERNODE_CONNECTED": "A new masternode is connected",
+  "NEW_PENDING_SENSOR": "A new device is waiting for appairing"
+}

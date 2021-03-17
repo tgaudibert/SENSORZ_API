@@ -1,0 +1,99 @@
+version: '2'
+services:
+
+
+
+  redisSession:
+    image: redis
+    container_name: redisSession
+    restart: always
+    command: redis-server --requirepass sessionRedis_sensorz35
+    environment:
+     - REDIS_REPLICATION_MODE=master
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - API_SENSORZ
+
+  api:
+    depends_on:
+      - sensorzDb
+      - redisSession
+    build: .
+    command: npm run-script staging
+    container_name: api
+    restart: always
+    #network_mode: host
+    volumes:
+      - ../../.:/usr/app/
+      - /usr/app/node_modules
+      - $HOME/docker/volumes/logs:/usr/app/logs
+    ports:
+      - "127.0.0.1:8070:8070"
+    networks:
+      - API_SENSORZ
+
+
+  sensorzDb:
+    image: postgres
+    container_name: sensorzDb
+    restart: on-failure
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - $HOME/docker/volumes/sensorz:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: testtest
+      POSTGRES_PASSWORD: testtest
+      POSTGRES_DB: sensorz
+    networks:
+      - API_SENSORZ
+
+
+  nginx:
+    depends_on:
+      - api
+    image: nginx:latest
+    container_name: sensorzNginx
+    volumes:
+      - ../nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - API_SENSORZ
+
+
+networks:
+  API_SENSORZ:
+    driver: bridge
+
+
+
+#  nginx:
+#    image: nginx:latest
+#    container_name: NGINX
+#    volumes:
+#      - ../nginx.conf:/etc/nginx/nginx.conf
+#    ports:
+#      - 80:80
+
+#  haproxy:
+#    image: haproxy:1.9-alpine
+#    container_name: REVERSE-PROXY-HAPROXY_BACKEND
+#    #network_mode: host
+#    ports:
+#      - 80:80
+#    volumes:
+#      - ../../haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
+
+
+
+#haproxy:
+#    image: haproxy:1.9-alpine
+#    ports:
+#      - 80:80
+#    volumes:
+#      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg

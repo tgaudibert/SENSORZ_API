@@ -1,0 +1,8 @@
+{
+
+  "LOW_BATTERY": "Un appareil est en batterie faible",
+  "WEAK_SIGNAL": "Un appareil recoit envoie un signal faible",
+  "LOW_LEVEL": "Un appareil enregistre une faible quantité",
+  "MASTERNODE_CONNECTED": "Votre noeud principal est désormais connecté",
+  "NEW_PENDING_SENSOR": "Un nouvel appareil est en attente"
+}

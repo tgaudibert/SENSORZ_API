@@ -1,0 +1,28 @@
+const PASSWORD_MIN = 10;
+const PASSWORD_MAX = 30;
+
+
+// Errors constant name is created from:
+// 1: uppercase input name + _ + (eg: NAME)
+// 2: error type serverd by joi + _ + (eg: MIN)
+// 3: ERROR
+// 4: final constant name: NAME_MIN_ERROR
+
+const PASSWORD_MAX_ERROR = `PASSWORD_MAX ${PASSWORD_MAX} CHARACTERS`;
+const PASSWORD_MIN_ERROR = `PASSWORD_MIN ${PASSWORD_MIN} CHARACTERS`;
+const INTERNAL_ERROR = 'INTERNAL_ERROR';
+const FETCH_INFO_ERROR_MESSAGE = 'FETCH_USER_ERROR';
+const RESET_SUCCESS = 'PASSWORD_RESET';
+const VALID_ACCOUNT = 'VALID_ACCOUNT'
+
+
+module.exports = {
+  PASSWORD_MAX,
+  PASSWORD_MIN,
+  PASSWORD_MAX_ERROR,
+  PASSWORD_MIN_ERROR,
+  INTERNAL_ERROR,
+  FETCH_INFO_ERROR_MESSAGE,
+  RESET_SUCCESS,
+  VALID_ACCOUNT
+};

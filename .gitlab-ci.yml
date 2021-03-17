@@ -1,0 +1,77 @@
+services:
+  - postgres:latest
+  - redis:latest
+
+variables:
+  # Configure mysql environment variables (https://hub.docker.com/_/mysql/)
+  POSTGRES_DB: sensorz
+  POSTGRES_USER: testtest
+  POSTGRES_PASSWORD: testtest
+  POSTGRES_HOST_AUTH_METHOD: trust
+
+  REDIS_PORT: 6379
+  REDIS_PASSWORD: sessionRedis_sensorz35
+
+stages:
+  - build
+  - test
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+
+
+install_dependencies:
+  image: node:latest
+  stage: build
+  script:
+    - npm install
+
+  artifacts:
+    paths:
+      - node_modules/
+
+testing_testing:
+  image: node:latest
+  stage: test
+  script:
+    - npm uninstall bcrypt
+    - npm install bcrypt
+    - npm run-script destroy_GITLABCI
+    - npm run-script migrate_GITLABCI
+    - npm run-script seed_GITLABCI
+
+      #unitTest
+    - npm run-script test_GITLABCI
+
+deploy_staging:
+  type: deploy
+  environment:
+    name: staging
+  script:
+      - echo $SSH_PRIVATE_KEY
+      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+        ##
+        ## Run ssh-agent (inside the build environment)
+        ##
+      - eval $(ssh-agent -s)
+
+        ##
+        ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+        ## We're using tr to fix line endings which makes ed25519 keys work
+        ## without extra base64 encoding.
+        ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+        ##
+      - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
+
+        ##
+        ## Create the SSH directory and give it the right permissions
+        ##
+      - mkdir -p ~/.ssh
+      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+      - ssh tgaudibert@51.91.8.119 -p 7822 "cd /home/tgaudibert/sensorz_api/ && git checkout master && git pull origin master && docker-compose build --no-cache && exit"
+
+  only:
+    - master
